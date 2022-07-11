@@ -1,5 +1,6 @@
-import * as vscode from "vscode";
+import path = require("path");
+import { makeFolders } from "./utils";
 
 export function newFeature() {
-  vscode.window.showInformationMessage("yessssssss");
+  makeFolders([path.join("lib", "core", "util.dart")]);
 }
