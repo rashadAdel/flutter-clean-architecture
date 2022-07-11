@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:flutter-clean-architecture.helloWorld"
+        "onCommand:flutter-clean-architecture.newFeature"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "flutter-clean-architecture.helloWorld",
-				"title": "Hello World"
+				"command": "flutter-clean-architecture.newFeature",
+				"title": "new Feature"
 			}
 		]
 	},
