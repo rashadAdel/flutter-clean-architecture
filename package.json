@@ -10,14 +10,45 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:flutter-clean-architecture.newFeature"
+		"onCommand:flutter-clean-architecture.newFeature",
+        "onCommand:flutter-clean-architecture.newModel",
+        "onCommand:flutter-clean-architecture.initApp",
+        "onCommand:flutter-clean-architecture.newPage",
+        "onCommand:flutter-clean-architecture.addAuth",
+        "onCommand:flutter-clean-architecture.initFirebase",
+        "onCommand:flutter-clean-architecture.enableLocalization"
+
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
+				"command": "flutter-clean-architecture.enableLocalization",
+				"title": "enable Localization"
+			},
+			{
+				"command": "flutter-clean-architecture.initFirebase",
+				"title": "init firebase"
+			},
+			{
+				"command": "flutter-clean-architecture.addAuth",
+				"title": "enable Authentication"
+			},
+			{
+				"command": "flutter-clean-architecture.newPage",
+				"title": "new Page"
+			},
+			{
 				"command": "flutter-clean-architecture.newFeature",
 				"title": "new Feature"
+			},
+			{
+				"command": "flutter-clean-architecture.newModel",
+				"title": "new Model"
+			},
+			{
+				"command": "flutter-clean-architecture.initApp",
+				"title": "init app"
 			}
 		]
 	},
