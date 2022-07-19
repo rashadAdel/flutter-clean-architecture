@@ -11,7 +11,8 @@
 	],
 	"activationEvents": [
 		"onCommand:flutter-clean-architecture.newFeature",
-        "onCommand:flutter-clean-architecture.newModel",
+		"onCommand:flutter-clean-architecture.tst",
+		"onCommand:flutter-clean-architecture.newBloc",
         "onCommand:flutter-clean-architecture.initApp",
         "onCommand:flutter-clean-architecture.newPage",
         "onCommand:flutter-clean-architecture.addAuth",
@@ -25,6 +26,9 @@
 			{
 				"command": "flutter-clean-architecture.enableLocalization",
 				"title": "enable Localization"
+			},{
+				"command": "flutter-clean-architecture.tst",
+				"title": "Test tst "
 			},
 			{
 				"command": "flutter-clean-architecture.initFirebase",
@@ -48,7 +52,7 @@
 			},
 			{
 				"command": "flutter-clean-architecture.initApp",
-				"title": "init app"
+				"title": "initialize app"
 			}
 		]
 	},
