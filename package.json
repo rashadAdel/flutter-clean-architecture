@@ -11,7 +11,6 @@
 	],
 	"activationEvents": [
 		"onCommand:flutter-clean-architecture.newFeature",
-		"onCommand:flutter-clean-architecture.tst",
 		"onCommand:flutter-clean-architecture.newBloc",
         "onCommand:flutter-clean-architecture.initApp",
         "onCommand:flutter-clean-architecture.newPage",
@@ -26,9 +25,6 @@
 			{
 				"command": "flutter-clean-architecture.enableLocalization",
 				"title": "enable Localization"
-			},{
-				"command": "flutter-clean-architecture.tst",
-				"title": "Test tst "
 			},
 			{
 				"command": "flutter-clean-architecture.initFirebase",
@@ -47,8 +43,8 @@
 				"title": "new Feature"
 			},
 			{
-				"command": "flutter-clean-architecture.newModel",
-				"title": "new Model"
+				"command": "flutter-clean-architecture.newBloc",
+				"title": "new block or cubit"
 			},
 			{
 				"command": "flutter-clean-architecture.initApp",

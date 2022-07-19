@@ -25,7 +25,7 @@ export function createFolders([...paths]: string[]) {
 }
 
 export function fixedPath(oldPath: string): string {
-  return oldPath.replace("/", path.sep).replace("\\", path.sep);
+  return oldPath.replaceAll("/", path.sep).replaceAll("\\", path.sep);
 }
 
 export function writeFile(filePath: string, content: string) {
@@ -52,47 +52,17 @@ export function showError(message: string) {
   vscode.window.showErrorMessage(message);
 }
 
-export function betweenBrackets(text: string, searchText: string): string {
-  const start = text.indexOf(searchText);
-  const openBracket = searchText[searchText.length - 1];
-  var closeBracket;
-  switch (openBracket) {
-    case "(":
-      closeBracket = ")";
-      break;
-    case "[":
-      closeBracket = "]";
-      break;
-    case "{":
-      closeBracket = "}";
-      break;
-  }
-  var openBrackets = [];
-  var closeBrackets = [];
-  for (let index = start; index < text.length; index++) {
-    if (text[index] === openBracket) {
-      openBrackets.push(index);
-    } else if (text[index] === closeBracket) {
-      closeBrackets.push(index);
-      if (openBrackets.length === closeBrackets.length) {
-        return text.substring(start, index + 1);
-      }
-    }
-  }
-  return "";
-}
-
 export async function editFile(
   filePath: string,
   searchText: string,
-  replaceText: string
+  replaceAllText: string
 ) {
   const fullPath: string = path.join(getProjectPath(), fixedPath(filePath));
   const readData = fs.readFileSync(fullPath, "utf-8");
-  if (readData.indexOf(replaceText) >= 0) {
+  if (readData.indexOf(replaceAllText) >= 0) {
     showError(`${filePath} file its already modified`);
   } else {
-    const newData: string = readData.replace(searchText, replaceText);
+    const newData: string = readData.replaceAll(searchText, replaceAllText);
     writeFile(filePath, newData);
   }
 }

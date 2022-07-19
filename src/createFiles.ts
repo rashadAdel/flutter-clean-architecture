@@ -648,28 +648,30 @@ export function friendlyText(text: string) {
   var _newText = text.toLowerCase();
   _newText = removeSpecialCharacters(_newText);
   _newText = removeAccents(_newText);
-  _newText = _newText.replace(/\s/g, "_");
+  _newText = _newText.replaceAll(/\s/g, "_");
 
   return _newText.trim();
 }
 
-function capitalizeName(text: string) {
-  var _newText = text.replace("_", " ");
-  var lowerCase = _newText.replace(/\b[a-z]/g, (match) => match.toUpperCase());
-  var _newText2 = lowerCase.replace(" ", "");
+export function capitalizeName(text: string) {
+  var _newText = text.replaceAll("_", " ");
+  var lowerCase = _newText.replaceAll(/\b[a-z]/g, (match) =>
+    match.toUpperCase()
+  );
+  var _newText2 = lowerCase.replaceAll(" ", "");
   return _newText2.trim();
 }
 
 function removeAccents(str: string) {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return str.normalize("NFD").replaceAll(/[\u0300-\u036f]/g, "");
 }
 
 function removeSpecialCharacters(str: string) {
-  return str.replace(/[^\w\s]/gi, "");
+  return str.replaceAll(/[^\w\s]/gi, "");
 }
 
-function transformUrlName(str: string) {
-  return str.replace("_", "-");
+export function transformUrlName(str: string) {
+  return str.replaceAll("_", "-");
 }
 
 function capitalize(s: string) {

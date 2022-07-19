@@ -2,14 +2,23 @@ import { readdirSync } from "fs";
 import * as vscode from "vscode";
 
 import {
+  capitalizeName,
   createBlocOrCubit,
   createCoreFiles,
   createLocalizationsFiles,
   createMain,
   createPubspec,
   friendlyText,
+  transformUrlName,
 } from "./createFiles";
-import { createFolders, fixedPath, getProjectPath, showMessage } from "./utils";
+import {
+  createFolders,
+  editFile,
+  fixedPath,
+  getProjectPath,
+  showMessage,
+  writeFile,
+} from "./utils";
 
 export async function initApp() {
   createFolders([
@@ -45,14 +54,99 @@ export function enableLocalization() {
 }
 
 export function newPage() {
-  throw new Error("Function not implemented.");
+  var pageName: string;
+  vscode.window
+    .showInputBox({
+      placeHolder: "new page name",
+    })
+    .then((name) => {
+      if (name !== undefined && name !== "") {
+        pageName = name;
+        if (pageName.toLowerCase().indexOf("page") < 0) {
+          pageName = pageName + " page";
+        }
+        pageName = friendlyText(pageName!);
+        const listOfFeatures = readdirSync(
+          fixedPath(`${getProjectPath()}/lib/features`)
+        );
+        listOfFeatures.push("core");
+        vscode.window
+          .showQuickPick(listOfFeatures, {
+            canPickMany: false,
+            placeHolder: "which feature want add the page?",
+          })
+          .then((featureName) => {
+            if (featureName !== undefined) {
+              //create page
+              const pathPage =
+                featureName === "core"
+                  ? `lib/core/ui/pages/${pageName}.dart`
+                  : `lib/features/${featureName}/presentation/pages/${pageName}.dart`;
+              const content = `import 'package:flutter/material.dart';
+                class ${capitalizeName(pageName)} extends StatelessWidget {
+                  const ${capitalizeName(
+                    pageName
+                  )}({Key? key}) : super(key: key);
+                
+                  @override
+                  Widget build(BuildContext context) {
+                    return Container();
+                  }
+                }`;
+              writeFile(pathPage, content);
+
+              //add in appRoutes
+              editFile(
+                `lib/core/strings/app_routes.dart`,
+                "class AppRoutes {",
+                `class AppRoutes {
+          static const  ${pageName.toUpperCase()}= '/${transformUrlName(
+                  pageName.toUpperCase()
+                ).replaceAll("-PAGE", "")}';`
+              );
+
+              //add in app_page
+              editFile(
+                "lib/core/routes/app_pages.dart",
+                "switch (routeSettings.name) {",
+                `switch (routeSettings.name) {
+                case AppRoutes.${pageName.toUpperCase()}:
+                  return MaterialPageRoute(builder: (_) => const ${capitalizeName(
+                    pageName
+                  )}());
+              `
+              );
+              var importRelativePath: string;
+              if (featureName === "core") {
+                importRelativePath = `import '../ui/pages/${pageName}.dart';`;
+              } else {
+                importRelativePath = `import '../../features/${featureName}/presentation/pages/${pageName}.dart';`;
+              }
+              //import
+              editFile(
+                "lib/core/routes/app_pages.dart",
+                `import 'package:flutter/material.dart';`,
+                `import 'package:flutter/material.dart';
+                ${importRelativePath}
+              `
+              );
+            } else {
+              showMessage("please select feature");
+              newPage();
+            }
+          });
+      } else {
+        showMessage("please enter page name");
+        newPage();
+      }
+    });
 }
 
 export function newFeature() {
   vscode.window
     .showInputBox({ placeHolder: `new Feature name` })
     .then((featureName) => {
-      if (featureName !== "") {
+      if (featureName !== "" && featureName !== undefined) {
         featureName = friendlyText(featureName!);
         const featurePath = "lib/features";
         createFolders([
