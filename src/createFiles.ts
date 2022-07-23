@@ -70,6 +70,12 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
+
+  assets:
+  - assets/icons/
+  - assets/images/
+  - assets/animations/
+
 `;
   writeFile("pubspec.yaml", content);
 }
@@ -109,6 +115,7 @@ class MyApp extends StatelessWidget {
   
   MaterialApp materialApp(ThemeState themeState) {  
     return MaterialApp(  
+      navigatorKey: navigator,
       themeMode: themeState.themeMode,  
       theme: lightTheme,  
       darkTheme: darkTheme,  
@@ -121,7 +128,7 @@ class MyApp extends StatelessWidget {
   
   Widget screenUtil(_, child) => ScreenUtilInit(  
         builder: (BuildContext context, Widget? child) {  
-          return child!;  
+          return Scaffold(body: child!);
         },  
         //! TODO: change it if u want use ScreenUtil  
         designSize: const Size(360, 690),  
@@ -163,13 +170,16 @@ function createRoutesFile() {
 import '../ui/pages/home_page.dart';  
 import '../ui/pages/unknown_page.dart';  
 import 'package:flutter/material.dart';  
-  
+
+GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+
 Route<dynamic> generateRoute(RouteSettings routeSettings) {  
   switch (routeSettings.name) {  
     case AppRoutes.HOME:  
-      return MaterialPageRoute(builder: (_) => const HomePage());  
+      return MaterialPageRoute(settings: routeSettings,builder: (_) => const HomePage());  
     default:  
       return MaterialPageRoute(  
+        settings: routeSettings,
           builder: (_) => UnknownPage(name: routeSettings.name ?? "null"));  
   }  
 }  
@@ -322,23 +332,57 @@ Widget build(BuildContext context) {
 `;
   writeFile("lib/core/ui/pages/home_page.dart", content);
   //unknown_page
-  content = `import 'package:flutter/material.dart';  
- class UnknownPage extends StatelessWidget {  
-  const UnknownPage({Key? key, required this.name}) : super(key: key);  
+  content = `import 'package:flutter/material.dart';
+  import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+  import '../../strings/app_routes.dart';  
+  class UnknownPage extends StatelessWidget {
+    const UnknownPage({Key? key, required this.name}) : super(key: key);
   
-  final String name;  
-//! edit it  
-  @override  
-  Widget build(BuildContext context) {  
-    return TextButton(  
-      child: const Icon(Icons.arrow_back),  
-      onPressed: () {  
-        Navigator.of(context).pop();  
-      },  
-    );  
-  }  
-}  
-`;
+    final String name;
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        color: Colors.red,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.back_hand, color: Colors.white),
+                  SizedBox(height: 100.h),
+                  Text(
+                    ' "\${name.replaceFirst("/", "")}" page not found',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed(AppRoutes.HOME);
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.home),
+                        Text("Go Home"),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  }
+  `;
   writeFile("lib/core/ui/pages/unknown_page.dart", content);
 }
 function createUtilsFiles() {
@@ -391,8 +435,10 @@ class NetworkInfoImpl implements NetworkInfo {
   writeFile("lib/core/utils/network_info.dart", content);
   //tools
   content = `import 'package:flutter/material.dart';  
- showMessage(String message, BuildContext context) {  
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));  
+  showMessage(String message) {
+    ScaffoldMessenger.of(navigator.currentContext!)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 }  
 `;
   writeFile("lib/core/utils/tools.dart", content);

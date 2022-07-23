@@ -25,7 +25,7 @@ export async function initApp() {
     "assets",
     "assets/animations",
     "assets/sounds",
-    "assets/image",
+    "assets/images",
     "assets/fonts",
     "assets/icons",
     "lib/core",
@@ -66,6 +66,7 @@ export function newPage() {
           pageName = pageName + " page";
         }
         pageName = friendlyText(pageName!);
+        createFolders(["lib/features"]);
         const listOfFeatures = readdirSync(
           fixedPath(`${getProjectPath()}/lib/features`)
         );
@@ -111,7 +112,7 @@ export function newPage() {
                 "switch (routeSettings.name) {",
                 `switch (routeSettings.name) {
                 case AppRoutes.${pageName.toUpperCase()}:
-                  return MaterialPageRoute(builder: (_) => const ${capitalizeName(
+                  return MaterialPageRoute(settings: routeSettings,builder: (_) => const ${capitalizeName(
                     pageName
                   )}());
               `
