@@ -24,31 +24,31 @@
 		"commands": [
 			{
 				"command": "flutter-clean-architecture.enableLocalization",
-				"title": "enable Localization"
+				"title": "clean-architecture: enable Localization"
 			},
 			{
 				"command": "flutter-clean-architecture.initFirebase",
-				"title": "init firebase"
+				"title": "clean-architecture: init firebase"
 			},
 			{
 				"command": "flutter-clean-architecture.addAuth",
-				"title": "enable Authentication"
+				"title": "clean-architecture: enable Authentication"
 			},
 			{
 				"command": "flutter-clean-architecture.newPage",
-				"title": "new Page"
+				"title": "clean-architecture: new Page"
 			},
 			{
 				"command": "flutter-clean-architecture.newFeature",
-				"title": "new Feature"
+				"title": "clean-architecture: new Feature"
 			},
 			{
 				"command": "flutter-clean-architecture.newBloc",
-				"title": "new block or cubit"
+				"title": "clean-architecture: new block or cubit"
 			},
 			{
 				"command": "flutter-clean-architecture.initApp",
-				"title": "initialize app"
+				"title": "clean-architecture: initialize app"
 			}
 		]
 	},

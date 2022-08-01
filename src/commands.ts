@@ -5,10 +5,12 @@ import {
   capitalizeName,
   createBlocOrCubit,
   createCoreFiles,
+  createFeatureFiles,
   createLocalizationsFiles,
   createMain,
   createPubspec,
   friendlyText,
+  inject,
   transformUrlName,
 } from "./createFiles";
 import {
@@ -28,17 +30,20 @@ export async function initApp() {
     "assets/images",
     "assets/fonts",
     "assets/icons",
-    "lib/core",
-    "lib/core/errors",
-    "lib/core/routes",
-    "lib/core/strings",
-    "lib/core/theme",
-    "lib/core/theme/cubit",
-    "lib/core/ui",
-    "lib/core/ui/layouts",
-    "lib/core/ui/pages",
-    "lib/core/ui/widgets",
-    "lib/core/utils",
+    "lib/shared",
+    "lib/shared/configs",
+    "lib/shared/errors",
+    "lib/shared/routes",
+    "lib/shared/constants",
+    "lib/shared/injection",
+    "lib/shared/extensions",
+    "lib/shared/theme",
+    "lib/shared/theme/cubit",
+    "lib/shared/ui",
+    "lib/shared/ui/layouts",
+    "lib/shared/ui/pages",
+    "lib/shared/ui/widgets",
+    "lib/shared/utils",
     "lib/features",
   ]);
 
@@ -70,7 +75,7 @@ export function newPage() {
         const listOfFeatures = readdirSync(
           fixedPath(`${getProjectPath()}/lib/features`)
         );
-        listOfFeatures.push("core");
+        listOfFeatures.push("shared");
         vscode.window
           .showQuickPick(listOfFeatures, {
             canPickMany: false,
@@ -80,8 +85,8 @@ export function newPage() {
             if (featureName !== undefined) {
               //create page
               const pathPage =
-                featureName === "core"
-                  ? `lib/core/ui/pages/${pageName}.dart`
+                featureName === "shared"
+                  ? `lib/shared/ui/pages/${pageName}.dart`
                   : `lib/features/${featureName}/presentation/pages/${pageName}.dart`;
               const content = `import 'package:flutter/material.dart';
                 class ${capitalizeName(pageName)} extends StatelessWidget {
@@ -96,36 +101,39 @@ export function newPage() {
                 }`;
               writeFile(pathPage, content);
 
+              const pageNameWithOutPageWord = pageName.replace("_page", "");
               //add in appRoutes
               editFile(
-                `lib/core/strings/app_routes.dart`,
+                `lib/shared/constants/app_routes.dart`,
                 "class AppRoutes {",
                 `class AppRoutes {
-          static const  ${pageName.toUpperCase()}= '/${transformUrlName(
-                  pageName.toUpperCase()
-                ).replaceAll("-PAGE", "")}';`
+          static const  ${pageNameWithOutPageWord.toUpperCase()}= '/${transformUrlName(
+                  pageNameWithOutPageWord.toUpperCase()
+                )}';`
               );
 
               //add in app_page
               editFile(
-                "lib/core/routes/app_pages.dart",
+                "lib/shared/routes/app_pages.dart",
                 "switch (routeSettings.name) {",
                 `switch (routeSettings.name) {
-                case AppRoutes.${pageName.toUpperCase()}:
+                case AppRoutes.${pageName
+                  .toUpperCase()
+                  .replaceAll("_PAGE", "")}:
                   return MaterialPageRoute(settings: routeSettings,builder: (_) => const ${capitalizeName(
                     pageName
                   )}());
               `
               );
               var importRelativePath: string;
-              if (featureName === "core") {
+              if (featureName === "shared") {
                 importRelativePath = `import '../ui/pages/${pageName}.dart';`;
               } else {
                 importRelativePath = `import '../../features/${featureName}/presentation/pages/${pageName}.dart';`;
               }
               //import
               editFile(
-                "lib/core/routes/app_pages.dart",
+                "lib/shared/routes/app_pages.dart",
                 `import 'package:flutter/material.dart';`,
                 `import 'package:flutter/material.dart';
                 ${importRelativePath}
@@ -164,8 +172,17 @@ export function newFeature() {
           `${featurePath}/${featureName}/presentation`,
           `${featurePath}/${featureName}/presentation/pages`,
           `${featurePath}/${featureName}/presentation/widgets`,
+          `${featurePath}/${featureName}/helper`,
+          `${featurePath}/${featureName}/helper/configs`,
+          `${featurePath}/${featureName}/helper/constants`,
+          `${featurePath}/${featureName}/helper/errors`,
+          `${featurePath}/${featureName}/helper/extensions`,
+          `${featurePath}/${featureName}/helper/injection`,
+          `${featurePath}/${featureName}/helper/utils`,
         ]);
-        createBlocOrCubit(featureName);
+        createFeatureFiles(featureName);
+        inject(featureName);
+        createBlocOrCubit(featureName, featureName);
       } else {
         showMessage("please enter name");
         newFeature();
